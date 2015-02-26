@@ -1,0 +1,12 @@
+include Comparable
+def <=>
+def inspect
+def to_s # for display with unit
+def as_[*units]
+def +
+def -
+def *
+dev /
+def ==
+def positive?/negative?
+defabs
