@@ -24,6 +24,13 @@ class Measured::DimensionTest < ActiveSupport::TestCase
     assert_equal "mm", @dimension.unit
   end
 
+  test "unit is coerced to string from symbol on #initialize and on #unit=" do
+    dimension = Measured::Dimension.new(1, :cm)
+    assert_equal "cm", dimension.unit
+    dimension.unit = :mm
+    assert_equal "mm", dimension.unit
+  end
+
   test "#unit= prevents you from assigning an unknown unit" do
     skip
   end
