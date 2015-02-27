@@ -29,13 +29,17 @@ class Measured::Conversion
     @units.map{|u| u.names}.flatten.sort
   end
 
+  def valid_unit?(unit)
+    valid_units.include?(unit.to_s)
+  end
+
   private
 
   def check_unit_names(names)
     raise Measured::UnitError, "Unit must have a name." if names.length == 0
 
-    names.map{|n| n.to_s }.each do |name|
-      raise Measured::UnitError, "Unit #{ name } has already been added." if valid_units.include?(name)
+    names.each do |name|
+      raise Measured::UnitError, "Unit #{ name } has already been added." if valid_unit?(name)
     end
 
     true

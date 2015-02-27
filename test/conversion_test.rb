@@ -52,4 +52,13 @@ class Measured::ConversionTest < ActiveSupport::TestCase
 
     assert_equal ["feet", "foot", "ft", "in", "inch", "m"], @conversion.valid_units
   end
+
+  test "#valid_unit? checks if the unit is valid or not" do
+    @conversion.base :m
+    @conversion.add :inch, value: "0.0254 meter"
+
+    assert @conversion.valid_unit?(:inch)
+    assert @conversion.valid_unit?("m")
+    refute @conversion.valid_unit?(:yard)
+  end
 end
