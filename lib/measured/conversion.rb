@@ -8,7 +8,7 @@ class Measured::Conversion
 
   def base(*names)
     raise Measured::UnitError, "Can only have one base unit. Already defined #{ @base_unit }." if @base_unit
-    check_unit_names(names)
+    validate_unit_names!(names)
 
     @base_unit = Unit.new(names)
     @units << @base_unit
@@ -18,7 +18,7 @@ class Measured::Conversion
 
   def add(*names, value:)
     raise Measured::UnitError, "A base unit has not yet been set." unless @base_unit
-    check_unit_names(names)
+    validate_unit_names!(names)
 
     @units << Unit.new(names, value: value)
 
@@ -35,7 +35,7 @@ class Measured::Conversion
 
   private
 
-  def check_unit_names(names)
+  def validate_unit_names!(names)
     raise Measured::UnitError, "Unit must have a name." if names.length == 0
 
     names.each do |name|
