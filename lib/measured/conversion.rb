@@ -33,6 +33,13 @@ class Measured::Conversion
     valid_units.include?(unit.to_s)
   end
 
+  def convert(value, from:, to:)
+    raise Measured::UnitError, "Source unit #{ from } does not exits." unless valid_unit?(from)
+    raise Measured::UnitError, "Converted unit #{ to } does not exits." unless valid_unit?(to)
+
+
+  end
+
   private
 
   def validate_unit_names!(names)

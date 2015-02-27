@@ -1,6 +1,6 @@
 class Measured::Measurable
   def initialize(value, unit)
-    validate_unit_name!(unit)
+    raise Measured::UnitError, "Unit #{ unit } does not exits." unless self.class.conversion.valid_unit?(unit)
 
     @value = value
     @unit = unit.to_s
@@ -8,15 +8,8 @@ class Measured::Measurable
 
   attr_reader :unit
 
-  def convert_to(unit)
-    validate_unit_name!(unit)
-
-  end
-
-  private
-
-  def validate_unit_name!(name)
-    raise Measured::UnitError, "Unit #{ name } does not exits." unless self.class.conversion.valid_unit?(name)
+  def convert_to(new_unit)
+    self.class.conversion.convert(@value, from: @unit, to: new_unit)
   end
 
   class << self
