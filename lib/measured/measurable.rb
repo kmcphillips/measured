@@ -16,5 +16,9 @@ class Measured::Measurable
       @conversion ||= Measured::Conversion.new
     end
 
+    def units
+      conversion.valid_units
+    end
+
   end
 end
