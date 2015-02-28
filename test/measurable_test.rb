@@ -3,7 +3,7 @@ require "test_helper"
 class Measured::MeasurableTest < ActiveSupport::TestCase
 
   setup do
-    @magic = Magic.new(1, "magic_missile")
+    @magic = Magic.new(1, :magic_missile)
   end
 
   test "#initialize requires two params, the amount and the unit" do
@@ -46,6 +46,10 @@ class Measured::MeasurableTest < ActiveSupport::TestCase
 
     assert_instance_of Measured::Conversion, conversion
     assert_equal conversion, Magic.conversion
+  end
+
+  test ".units returns all units" do
+    assert_equal ["arcane", "fire", "fireball", "fireballs", "ice", "magic_missile", "magic_missiles", "ultima"], Magic.units
   end
 
   test "#convert_to raises on an invalid unit" do
