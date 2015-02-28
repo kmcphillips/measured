@@ -34,4 +34,14 @@ class Measured::UnitTest < ActiveSupport::TestCase
     end
   end
 
+  test "#to_s" do
+    assert_equal "pie", Measured::Unit.new(:pie).to_s
+    assert_equal "pie (1/2 sweet)", Measured::Unit.new(:pie, aliases: ["cake"], value: [Rational(1,2), "sweet"]).to_s
+  end
+
+  test "#inspect returns an expected string" do
+    assert_equal "#<Measured::Unit: pie (pie) >", Measured::Unit.new(:pie).inspect
+    assert_equal "#<Measured::Unit: pie (cake, pie) 1/2 sweet>", Measured::Unit.new(:pie, aliases: ["cake"], value: [Rational(1,2), "sweet"]).inspect
+  end
+
 end
