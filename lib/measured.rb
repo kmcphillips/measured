@@ -11,3 +11,4 @@ require "measured/unit"
 require "measured/conversion"
 
 require "measured/dimension"
+require "measured/weight"

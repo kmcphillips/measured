@@ -33,7 +33,7 @@ class Measured::Conversion
 
   def add_new_unit(unit_name, aliases:, value: nil, base: false)
     if base && @base_unit
-      raise Measured::UnitError, "Can only have one base unit. Already defined #{ @base_unit }."
+      raise Measured::UnitError, "Can only have one base unit. Adding #{ unit_name } but already defined #{ @base_unit }."
     elsif !base && !@base_unit
       raise Measured::UnitError, "A base unit has not yet been set."
     end
