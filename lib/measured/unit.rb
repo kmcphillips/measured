@@ -1,4 +1,6 @@
 class Measured::Unit
+  include Comparable
+
   def initialize(name, aliases: [], value: nil)
     @name = name.to_s
     @names = ([@name] + aliases.map{|n| n.to_s }).sort
@@ -18,6 +20,18 @@ class Measured::Unit
 
   def inspect
     "#<Measured::Unit: #{ @name } (#{ @names.join(", ") }) #{ conversion_string }>"
+  end
+
+  def <=>(other)
+    if self.class == other.class
+      if other.names != @names
+        other.names <=> @names
+      else
+        other.conversion_amount <=> @conversion_amount
+      end
+    else
+      @name <=> other
+    end
   end
 
   private
