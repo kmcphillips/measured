@@ -7,5 +7,7 @@ module Measured
 end
 
 require "measured/measurable"
+require "measured/unit"
 require "measured/conversion"
+
 require "measured/dimension"

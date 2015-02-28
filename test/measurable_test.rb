@@ -3,7 +3,7 @@ require "test_helper"
 class Measured::MeasurableTest < ActiveSupport::TestCase
 
   setup do
-    @magic = Magic.new(1, "fire")
+    @magic = Magic.new(1, "magic_missile")
   end
 
   test "#initialize requires two params, the amount and the unit" do
@@ -27,8 +27,18 @@ class Measured::MeasurableTest < ActiveSupport::TestCase
     end
   end
 
+  test "#initialize converts numbers and strings into BigDecimal" do
+    assert_equal BigDecimal(1), Magic.new(1, :arcane).value
+    assert_equal BigDecimal("2.3"), Magic.new("2.3", :arcane).value
+    assert_equal BigDecimal("5"), Magic.new("5", :arcane).value
+  end
+
   test "#unit allows you to read the unit string" do
-    assert_equal "fire", @magic.unit
+    assert_equal "magic_missile", @magic.unit
+  end
+
+  test "#value allows you to read the numeric value" do
+    assert_equal BigDecimal(1), @magic.value
   end
 
   test ".conversion is set and cached" do

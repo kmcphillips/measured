@@ -6,23 +6,12 @@ class Measured::Conversion
 
   attr_reader :base_unit, :units
 
-  def base(*names)
-    raise Measured::UnitError, "Can only have one base unit. Already defined #{ @base_unit }." if @base_unit
-    validate_unit_names!(names)
-
-    @base_unit = Unit.new(names)
-    @units << @base_unit
-
-    self
+  def set_base(unit_name, aliases: [])
+    add_new_unit(unit_name, aliases: aliases, base: true)
   end
 
-  def add(*names, value:)
-    raise Measured::UnitError, "A base unit has not yet been set." unless @base_unit
-    validate_unit_names!(names)
-
-    @units << Unit.new(names, value: value)
-
-    self
+  def add(unit_name, aliases: [], value:)
+    add_new_unit(unit_name, aliases: aliases, value: value)
   end
 
   def valid_units
@@ -42,23 +31,26 @@ class Measured::Conversion
 
   private
 
-  def validate_unit_names!(names)
-    raise Measured::UnitError, "Unit must have a name." if names.length == 0
+  def add_new_unit(unit_name, aliases:, value: nil, base: false)
+    if base && @base_unit
+      raise Measured::UnitError, "Can only have one base unit. Already defined #{ @base_unit }."
+    elsif !base && !@base_unit
+      raise Measured::UnitError, "A base unit has not yet been set."
+    end
 
+    check_for_duplicate_unit_names([unit_name] + aliases)
+
+    unit = Measured::Unit.new(unit_name, aliases: aliases, value: value)
+    @units << unit
+    @base_unit = unit if base
+
+    unit
+  end
+
+  def check_for_duplicate_unit_names(names)
     names.each do |name|
       raise Measured::UnitError, "Unit #{ name } has already been added." if valid_unit?(name)
     end
-
-    true
-  end
-
-  class Unit
-    def initialize(names, value: nil)
-      @names = names.map{|n| n.to_s }
-      @value = value
-    end
-
-    attr_reader :names
   end
 
 end
