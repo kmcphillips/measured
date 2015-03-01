@@ -61,8 +61,100 @@ class Measured::ConversionTest < ActiveSupport::TestCase
     refute @conversion.valid_unit?(:yard)
   end
 
-  test "values are parsed into units and numbers as BigDecimals" do
-    skip
-    Magic.conversion.units[0]
+  test "#convert raises if either unit is not found" do
+    assert_raises Measured::UnitError do
+      Magic.conversion.convert(1, from: "fire", to: "doesnt_exist")
+    end
+
+    assert_raises Measured::UnitError do
+      Magic.conversion.convert(1, from: "doesnt_exist", to: "fire")
+    end
   end
+
+  test "#convert converts betwen two known units" do
+    @conversion.set_base :m
+    @conversion.add :cm, value: "0.01 m"
+
+    assert_equal BigDecimal("10"), @conversion.convert(BigDecimal("1000"), from: "cm", to: "m")
+    assert_equal BigDecimal("250"), @conversion.convert(BigDecimal("2.5"), from: "m", to: "cm")
+  end
+
+  test "#convert handles the same unit" do
+    @conversion.set_base :m
+    @conversion.add :cm, value: "0.01 m"
+
+    assert_equal BigDecimal("2"), @conversion.convert(BigDecimal("2"), from: "cm", to: "cm")
+  end
+
+  test "#conversion_table returns expected nested hashes with BigDecimal conversion factors in a tiny data set" do
+    @conversion.set_base :m
+    @conversion.add :cm, value: "0.01 m"
+
+    expected = {
+      "m"  => {
+        "m"  => BigDecimal("1"),
+        "cm" => BigDecimal("100")
+      },
+      "cm" => {
+        "cm" => BigDecimal("1"),
+        "m"  => BigDecimal("0.01")
+      }
+    }
+
+    assert_equal expected, @conversion.conversion_table
+  end
+
+  test "#conversion_table returns expected nested hashes with BigDecimal conversion factors" do
+    @conversion.set_base :m
+    @conversion.add :cm, value: "0.01 m"
+    @conversion.add :mm, value: "0.001 m"
+
+    expected = {
+      "m"  => {
+        "m"  => BigDecimal("1"),
+        "cm" => BigDecimal("100"),
+        "mm" => BigDecimal("1000")
+      },
+      "cm" => {
+        "cm" => BigDecimal("1"),
+        "m"  => BigDecimal("0.01"),
+        "mm" => BigDecimal("10")
+      },
+      "mm" => {
+        "mm" => BigDecimal("1"),
+        "m"  => BigDecimal("0.001"),
+        "cm" => BigDecimal("0.1")
+      }
+    }
+
+    assert_equal expected, @conversion.conversion_table
+  end
+
+  test "#conversion_table returns expected nested hashes with BigDecimal conversion factors in an indrect path" do
+    skip
+    @conversion.set_base :single
+    @conversion.add :double, value: "2 single"
+    @conversion.add :quad, value: "2 double"
+
+    expected = {
+      "single"  => {
+        "single"  => BigDecimal("1"),
+        "double" => BigDecimal("2"),
+        "quad" => BigDecimal("4")
+      },
+      "double" => {
+        "double" => BigDecimal("1"),
+        "single"  => BigDecimal("0.5"),
+        "quad" => BigDecimal("2")
+      },
+      "quad" => {
+        "quad" => BigDecimal("1"),
+        "single"  => BigDecimal("0.25"),
+        "double" => BigDecimal("0.5")
+      }
+    }
+
+    assert_equal expected, @conversion.conversion_table
+  end
+
 end
