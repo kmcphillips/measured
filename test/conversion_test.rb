@@ -131,26 +131,35 @@ class Measured::ConversionTest < ActiveSupport::TestCase
   end
 
   test "#conversion_table returns expected nested hashes with BigDecimal conversion factors in an indrect path" do
-    skip
-    @conversion.set_base :single
-    @conversion.add :double, value: "2 single"
-    @conversion.add :quad, value: "2 double"
+    @conversion.set_base :mm
+    @conversion.add :cm, value: "10 mm"
+    @conversion.add :dm, value: "10 cm"
+    @conversion.add :m, value: "10 dm"
 
     expected = {
-      "single"  => {
-        "single"  => BigDecimal("1"),
-        "double" => BigDecimal("2"),
-        "quad" => BigDecimal("4")
+      "m"  => {
+        "m"  => BigDecimal("1"),
+        "cm" => BigDecimal("100"),
+        "dm" => BigDecimal("10"),
+        "mm" => BigDecimal("1000")
       },
-      "double" => {
-        "double" => BigDecimal("1"),
-        "single"  => BigDecimal("0.5"),
-        "quad" => BigDecimal("2")
+      "cm" => {
+        "cm" => BigDecimal("1"),
+        "dm" => BigDecimal("0.1"),
+        "m"  => BigDecimal("0.01"),
+        "mm" => BigDecimal("10")
       },
-      "quad" => {
-        "quad" => BigDecimal("1"),
-        "single"  => BigDecimal("0.25"),
-        "double" => BigDecimal("0.5")
+      "dm" => {
+        "dm" => BigDecimal("1"),
+        "cm" => BigDecimal("10"),
+        "m"  => BigDecimal("0.1"),
+        "mm" => BigDecimal("100")
+      },
+      "mm" => {
+        "mm" => BigDecimal("1"),
+        "m"  => BigDecimal("0.001"),
+        "m"  => BigDecimal("0.01"),
+        "cm" => BigDecimal("0.1")
       }
     }
 

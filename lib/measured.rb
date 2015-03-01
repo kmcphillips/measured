@@ -9,6 +9,7 @@ end
 require "measured/measurable"
 require "measured/unit"
 require "measured/conversion"
+require "measured/conversion_table"
 
 require "measured/dimension"
 require "measured/weight"
