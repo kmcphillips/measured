@@ -62,11 +62,22 @@ class Measured::ConversionTest < ActiveSupport::TestCase
 
   test "#unit? checks if the unit is part of the units and aliases" do
     @conversion.set_base :m
-    @conversion.add :inch, value: "0.0254 meter"
+    @conversion.add :inch, aliases: [:in], value: "0.0254 meter"
 
     assert @conversion.unit?(:inch)
     assert @conversion.unit?("m")
+    refute @conversion.unit?("in")
     refute @conversion.unit?(:yard)
+  end
+
+  test "#unit_or_alias? checks if the unit is part of the units but not aliases" do
+    @conversion.set_base :m
+    @conversion.add :inch, aliases: [:in], value: "0.0254 meter"
+
+    assert @conversion.unit_or_alias?(:inch)
+    assert @conversion.unit_or_alias?("m")
+    assert @conversion.unit_or_alias?("in")
+    refute @conversion.unit_or_alias?(:yard)
   end
 
   test "#to_unit_name converts a unit name to its base unit" do

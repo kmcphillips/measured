@@ -3,7 +3,7 @@ require "test_helper"
 class Measured::MeasurableTest < ActiveSupport::TestCase
 
   setup do
-    @magic = Magic.new(1, :magic_missile)
+    @magic = Magic.new(10, :magic_missile)
   end
 
   test "#initialize requires two params, the amount and the unit" do
@@ -42,7 +42,7 @@ class Measured::MeasurableTest < ActiveSupport::TestCase
   end
 
   test "#value allows you to read the numeric value" do
-    assert_equal BigDecimal(1), @magic.value
+    assert_equal BigDecimal(10), @magic.value
   end
 
   test ".conversion is set and cached" do
@@ -67,10 +67,22 @@ class Measured::MeasurableTest < ActiveSupport::TestCase
   end
 
   test "#convert_to returns a new object of the same type in the new unit" do
-    skip
+    converted = @magic.convert_to(:arcane)
+
+    refute_equal converted, @magic
+    assert_equal BigDecimal(10), @magic.value
+    assert_equal "magic_missile", @magic.unit
+    assert_equal BigDecimal(1), converted.value
+    assert_equal "arcane", converted.unit
   end
 
   test "#convert_to! replaces the existing object with a new version in the new unit" do
-    skip
+    converted = @magic.convert_to!(:arcane)
+
+    assert_equal converted, @magic
+    assert_equal BigDecimal(1), @magic.value
+    assert_equal "arcane", @magic.unit
+    assert_equal BigDecimal(1), converted.value
+    assert_equal "arcane", converted.unit
   end
 end

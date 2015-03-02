@@ -22,8 +22,12 @@ class Measured::Conversion
     @units.map{|u| u.name}.sort
   end
 
-  def unit?(name)
+  def unit_or_alias?(name)
     unit_names_with_aliases.include?(name.to_s)
+  end
+
+  def unit?(name)
+    unit_names.include?(name.to_s)
   end
 
   def to_unit_name(name)
@@ -37,7 +41,9 @@ class Measured::Conversion
     from_unit = unit_for(from)
     to_unit = unit_for(to)
 
-    value * conversion_table[from][to]
+    raise Measured::UnitError, "Cannot find conversion entry from #{ from } to #{ to }" unless conversion = conversion_table[from][to]
+
+    value * conversion
   end
 
   def conversion_table
@@ -66,7 +72,7 @@ class Measured::Conversion
 
   def check_for_duplicate_unit_names(names)
     names.each do |name|
-      raise Measured::UnitError, "Unit #{ name } has already been added." if unit?(name)
+      raise Measured::UnitError, "Unit #{ name } has already been added." if unit_or_alias?(name)
     end
   end
 
