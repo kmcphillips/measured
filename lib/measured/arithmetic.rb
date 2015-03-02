@@ -1,31 +1,14 @@
 module Measured::Arithmetic
   def +(other)
-    if other.is_a?(self.class)
-      self.class.new(self.value + other.convert_to(self.unit).value, self.unit)
-    elsif other.is_a?(Numeric)
-      self.class.new(self.value + other, self.unit)
-    else
-      raise TypeError, "Cannot add #{ other } to #{ self }"
-    end
+    arithmetic_operation(other, :+)
   end
 
   def -(other)
-    if other.is_a?(self.class)
-      self.class.new(self.value - other.convert_to(self.unit).value, self.unit)
-    elsif other.is_a?(Numeric)
-      self.class.new(self.value - other, self.unit)
-    else
-      raise TypeError, "Cannot add #{ other } to #{ self }"
-    end
+    arithmetic_operation(other, :-)
   end
 
   def *(other)
-    if value.is_a? Numeric
-      # Money.new(fractional * value, currency)
-      # TODO
-    else
-      raise ArgumentError, "TODO"
-    end
+    arithmetic_operation(other, :*)
   end
 
   def /(other)
@@ -37,5 +20,17 @@ module Measured::Arithmetic
 
   def coerce(other)
     [self, other]
+  end
+
+  private
+
+  def arithmetic_operation(other, operator)
+    if other.is_a?(self.class)
+      self.class.new(self.value.send(operator, other.convert_to(self.unit).value), self.unit)
+    elsif other.is_a?(Numeric)
+      self.class.new(self.value.send(operator, other), self.unit)
+    else
+      raise TypeError, "Invalid operation #{ operator } between #{ self.class } to #{ other.class }"
+    end
   end
 end
