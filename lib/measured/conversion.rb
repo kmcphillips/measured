@@ -33,7 +33,7 @@ class Measured::Conversion
   end
 
   def conversion_table
-    @conversion_table ||= Measured::ConversionTable.new(@units, base_unit: @base_unit).to_h
+    @conversion_table ||= Measured::ConversionTable.new(@units).to_h
   end
 
   private

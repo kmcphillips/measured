@@ -6,7 +6,7 @@ class Measured::ConversionTableTest < ActiveSupport::TestCase
   end
 
   test "#initialize accepts a list of units and a base unit" do
-    Measured::ConversionTable.new([@unit], base_unit: @unit)
+    Measured::ConversionTable.new([@unit])
   end
 
   test "#to_h should return a hash for the simple case" do
@@ -14,6 +14,6 @@ class Measured::ConversionTableTest < ActiveSupport::TestCase
       "test" => {"test" => BigDecimal("1")}
     }
 
-    assert_equal expected, Measured::ConversionTable.new([@unit], base_unit: @unit).to_h
+    assert_equal expected, Measured::ConversionTable.new([@unit]).to_h
   end
 end

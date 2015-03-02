@@ -1,16 +1,13 @@
 class Measured::ConversionTable
 
-  def initialize(units, base_unit: base_unit)
+  def initialize(units)
     @units = units
-    @base_unit = base_unit
   end
 
   def to_h
-    table = {
-      @base_unit.name => {@base_unit.name => BigDecimal("1")}
-    }
+    table = {}
 
-    units_without_base.map{|u| u.name}.each do |to_unit|
+    @units.map{|u| u.name}.each do |to_unit|
       to_table = {to_unit => BigDecimal("1")}
 
       table.each do |from_unit, from_table|
@@ -25,10 +22,6 @@ class Measured::ConversionTable
   end
 
   private
-
-  def units_without_base
-    @units.reject{|u| u == @base_unit}
-  end
 
   def find_conversion(to:, from:)
     conversion = find_direct_conversion(to: to, from: from) || find_tree_traversal_conversion(to: to, from: from)
