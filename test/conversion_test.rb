@@ -158,7 +158,7 @@ class Measured::ConversionTest < ActiveSupport::TestCase
       "mm" => {
         "mm" => BigDecimal("1"),
         "m"  => BigDecimal("0.001"),
-        "m"  => BigDecimal("0.01"),
+        "dm"  => BigDecimal("0.01"),
         "cm" => BigDecimal("0.1")
       }
     }
