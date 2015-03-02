@@ -1,4 +1,8 @@
 class Measured::Measurable
+  include Comparable
+
+  attr_reader :unit, :value
+
   def initialize(value, unit)
     raise Measured::UnitError, "Unit #{ unit } does not exits." unless self.class.conversion.unit_or_alias?(unit)
 
@@ -7,8 +11,6 @@ class Measured::Measurable
 
     @unit = self.class.conversion.to_unit_name(unit)
   end
-
-  attr_reader :unit, :value
 
   def convert_to(new_unit)
     new_unit_name = self.class.conversion.to_unit_name(new_unit)
@@ -25,6 +27,26 @@ class Measured::Measurable
 
     self
   end
+
+  def to_s
+    [value.to_f.to_s.gsub(/\.0\Z/, ""), unit].join(" ")
+  end
+
+  def inspect
+    "#<#{ self.class }: #{ value } #{ unit }>"
+  end
+
+  def <=>(other)
+    if other.is_a?(self.class) && unit == other.unit
+      value <=> other.value
+    end
+  end
+
+  def ==(other)
+    !!(other.is_a?(self.class) && unit == other.unit && value == other.value)
+  end
+
+  alias_method :eql?, :==
 
   class << self
 

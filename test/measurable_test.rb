@@ -85,4 +85,34 @@ class Measured::MeasurableTest < ActiveSupport::TestCase
     assert_equal BigDecimal(1), converted.value
     assert_equal "arcane", converted.unit
   end
+
+  test "#to_s outputs the number and the unit" do
+    assert_equal "10 fireball", Magic.new(10, :fire).to_s
+    assert_equal "1.234 magic_missile", Magic.new("1.234", :magic_missile).to_s
+  end
+
+  test "#inspect shows the number and the unit" do
+    assert_equal "#<Magic: 0.1E2 fireball>", Magic.new(10, :fire).inspect
+    assert_equal "#<Magic: 0.1234E1 magic_missile>", Magic.new("1.234", :magic_missile).inspect
+  end
+
+  test "#<=> compares only if the class and unit are the same" do
+    assert_nil @magic <=> Magic.new(10, :fire)
+    assert_equal 1, @magic <=> Magic.new(9, :magic_missile)
+    assert_equal 0, @magic <=> Magic.new(10, :magic_missile)
+    assert_equal -1, @magic <=> Magic.new(11, :magic_missile)
+  end
+
+  test "#== should be the same if the classes, unit, and amount match" do
+    assert @magic == @magic
+    assert Magic.new(10, :magic_missile) == Magic.new("10", "magic_missile")
+    refute Magic.new(1, :arcane) == Magic.new(10, :magic_missile)
+  end
+
+  test "#eql? should be the same if the classes, unit, and amount match" do
+    assert @magic == @magic
+    assert Magic.new(10, :magic_missile) == Magic.new("10", "magic_missile")
+    refute Magic.new(1, :arcane) == Magic.new(10, :magic_missile)
+  end
+
 end
