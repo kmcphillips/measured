@@ -12,6 +12,7 @@ module Measured::Arithmetic
   end
 
   def /(other)
+    arithmetic_operation(other, :/)
   end
 
   def -@

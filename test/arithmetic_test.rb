@@ -4,7 +4,7 @@ class Measured::ArithmeticTest < ActiveSupport::TestCase
   setup do
     @two = Magic.new(2, :magic_missile)
     @three = Magic.new(3, :magic_missile)
-    @four_in_different_unit = Magic.new(2, :ice)
+    @four = Magic.new(4, :magic_missile)
   end
 
   test "#+ should add together same units" do
@@ -97,8 +97,34 @@ class Measured::ArithmeticTest < ActiveSupport::TestCase
     end
   end
 
-  test "#/" do
-    skip
+  test "#/ should multiply together same units" do
+    assert_equal Magic.new("0.5", :magic_missile), @two / @four
+    assert_equal Magic.new(2, :magic_missile), @four / @two
+  end
+
+  test "#/ should multiply a number to the value" do
+    assert_equal Magic.new("0.5", :magic_missile), @two / 4
+    assert_equal Magic.new(2, :magic_missile), 2 / @four
+  end
+
+  test "#/ should raise if different unit system" do
+    assert_raises TypeError do
+      OtherFakeSystem.new(1, :other_fake_base) / @two
+    end
+
+    assert_raises TypeError do
+      @two / OtherFakeSystem.new(1, :other_fake_base)
+    end
+  end
+
+  test "#/ should raise if adding something nonsense" do
+    assert_raises TypeError do
+      @two / "thing"
+    end
+
+    assert_raises NoMethodError do
+      "thing" / @two
+    end
   end
 
   test "#-@ returns the negative version" do
