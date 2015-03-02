@@ -17,3 +17,10 @@ class Magic < Measured::Measurable
     value: "10 arcane"
 
 end
+
+class OtherFakeSystem < Measured::Measurable
+
+  conversion.set_base :other_fake_base
+  conversion.add :other_fake1, value: "2 other_fake_base"
+
+end

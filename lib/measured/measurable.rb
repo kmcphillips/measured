@@ -1,5 +1,6 @@
 class Measured::Measurable
   include Comparable
+  include Measured::Arithmetic
 
   attr_reader :unit, :value
 
