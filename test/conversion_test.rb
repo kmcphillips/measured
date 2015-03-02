@@ -44,21 +44,47 @@ class Measured::ConversionTest < ActiveSupport::TestCase
     end
   end
 
-  test "#valid_units lists all allowed unit names" do
+  test "#unit_names_with_aliases lists all allowed unit names" do
     @conversion.set_base :m
     @conversion.add :in, aliases: [:inch], value: "0.0254 meter"
-    @conversion.add :foot, aliases: [:feet, :ft], value: "0.3048 meter"
+    @conversion.add :ft, aliases: [:feet, :foot], value: "0.3048 meter"
 
-    assert_equal ["feet", "foot", "ft", "in", "inch", "m"], @conversion.valid_units
+    assert_equal ["feet", "foot", "ft", "in", "inch", "m"], @conversion.unit_names_with_aliases
   end
 
-  test "#valid_unit? checks if the unit is valid or not" do
+  test "#unit_names lists all base unit names without aliases" do
+    @conversion.set_base :m
+    @conversion.add :in, aliases: [:inch], value: "0.0254 meter"
+    @conversion.add :ft, aliases: [:feet, :foot], value: "0.3048 meter"
+
+    assert_equal ["ft", "in", "m"], @conversion.unit_names
+  end
+
+  test "#unit? checks if the unit is part of the units and aliases" do
     @conversion.set_base :m
     @conversion.add :inch, value: "0.0254 meter"
 
-    assert @conversion.valid_unit?(:inch)
-    assert @conversion.valid_unit?("m")
-    refute @conversion.valid_unit?(:yard)
+    assert @conversion.unit?(:inch)
+    assert @conversion.unit?("m")
+    refute @conversion.unit?(:yard)
+  end
+
+  test "#to_unit_name converts a unit name to its base unit" do
+    assert_equal "fireball", Magic.conversion.to_unit_name("fire")
+  end
+
+  test "#to_unit_name does not care about string or symbol" do
+    assert_equal "fireball", Magic.conversion.to_unit_name(:fire)
+  end
+
+  test "#to_unit_name passes through if already base unit name" do
+    assert_equal "fireball", Magic.conversion.to_unit_name("fireball")
+  end
+
+  test "#to_unit_name raises if not found" do
+    assert_raises Measured::UnitError do
+      Magic.conversion.to_unit_name("thunder")
+    end
   end
 
   test "#convert raises if either unit is not found" do

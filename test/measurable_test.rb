@@ -33,6 +33,10 @@ class Measured::MeasurableTest < ActiveSupport::TestCase
     assert_equal BigDecimal("5"), Magic.new("5", :arcane).value
   end
 
+  test "#initialize converts to the base unit name" do
+    assert_equal "fireball", Magic.new(1, :fire).unit
+  end
+
   test "#unit allows you to read the unit string" do
     assert_equal "magic_missile", @magic.unit
   end
@@ -48,8 +52,12 @@ class Measured::MeasurableTest < ActiveSupport::TestCase
     assert_equal conversion, Magic.conversion
   end
 
-  test ".units returns all units" do
-    assert_equal ["arcane", "fire", "fireball", "fireballs", "ice", "magic_missile", "magic_missiles", "ultima"], Magic.units
+  test ".units returns just the base units" do
+    assert_equal ["arcane", "fireball", "ice", "magic_missile", "ultima"], Magic.units
+  end
+
+  test ".units_with_aliases returns all units" do
+    assert_equal ["arcane", "fire", "fireball", "fireballs", "ice", "magic_missile", "magic_missiles", "ultima"], Magic.units_with_aliases
   end
 
   test "#convert_to raises on an invalid unit" do

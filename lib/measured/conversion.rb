@@ -14,17 +14,25 @@ class Measured::Conversion
     add_new_unit(unit_name, aliases: aliases, value: value)
   end
 
-  def valid_units
+  def unit_names_with_aliases
     @units.map{|u| u.names}.flatten.sort
   end
 
-  def valid_unit?(unit)
-    valid_units.include?(unit.to_s)
+  def unit_names
+    @units.map{|u| u.name}.sort
+  end
+
+  def unit?(name)
+    unit_names_with_aliases.include?(name.to_s)
+  end
+
+  def to_unit_name(name)
+    unit_for(name).name
   end
 
   def convert(value, from:, to:)
-    raise Measured::UnitError, "Source unit #{ from } does not exits." unless valid_unit?(from)
-    raise Measured::UnitError, "Converted unit #{ to } does not exits." unless valid_unit?(to)
+    raise Measured::UnitError, "Source unit #{ from } does not exits." unless unit?(from)
+    raise Measured::UnitError, "Converted unit #{ to } does not exits." unless unit?(to)
 
     from_unit = unit_for(from)
     to_unit = unit_for(to)
@@ -58,7 +66,7 @@ class Measured::Conversion
 
   def check_for_duplicate_unit_names(names)
     names.each do |name|
-      raise Measured::UnitError, "Unit #{ name } has already been added." if valid_unit?(name)
+      raise Measured::UnitError, "Unit #{ name } has already been added." if unit?(name)
     end
   end
 

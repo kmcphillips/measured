@@ -1,11 +1,11 @@
 class Measured::Measurable
   def initialize(value, unit)
-    raise Measured::UnitError, "Unit #{ unit } does not exits." unless self.class.conversion.valid_unit?(unit)
+    raise Measured::UnitError, "Unit #{ unit } does not exits." unless self.class.conversion.unit?(unit)
 
     @value = value
     @value = BigDecimal(@value) unless @value.is_a?(BigDecimal)
 
-    @unit = unit.to_s
+    @unit = self.class.conversion.to_unit_name(unit)
   end
 
   attr_reader :unit, :value
@@ -30,7 +30,11 @@ class Measured::Measurable
     end
 
     def units
-      conversion.valid_units
+      conversion.unit_names
+    end
+
+    def units_with_aliases
+      conversion.unit_names_with_aliases
     end
 
   end
